@@ -41,16 +41,46 @@ body_volume <- function(file_name, split_level = .85, pixel_size = 1){
   return(volume)
 }
 
-# body_volume("moth1.jpg")
-
-df <- data.frame(matrix(ncol = 2, nrow = 0))
-colnames(df) <- c('file','value')
-
-for(file in list.files(path = "files", pattern = "*body\\.(png|jpg)$")){
-  # print(file)
-  # print(body_volume(paste0('files/', file)))
-  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+wing_inertia <- function(file_name, split_level = .85){
+  
+  img.black <- (grayscale(load.image(file_name)) >= split_level)
+  
+  cloud <- which(
+    matrix(img.black, dim(img.black)[1], dim(img.black)[2]) == FALSE,
+    arr.ind = T
+  )
+  
+  x <- mean(cloud[,c('row')])
+  
+  y <- mean(cloud[,c('col')])
+  
+  inertia <- sum((cloud[,c('row')] - x)^2 + (cloud[,c('col')] - y)^2)
+  
+  return(inertia)
 }
 
-write.csv(df, "data.csv", row.names = FALSE)
+# body_volume("moth1.jpg")
 
+# wing_inertia("new_files/right_wing_a_fasciatus.png")
+
+df <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(df) <- c('file','volume')
+for(file in list.files(path = "files", pattern = "*body\\.(png|jpg)$")){
+  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+}
+write.csv(df, "body.csv", row.names = FALSE)
+
+
+df <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(df) <- c('file','inertia')
+for(file in list.files(path = "files", pattern = "*left_wing\\.(png|jpg)$")){
+  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+}
+write.csv(df, "left_wing.csv", row.names = FALSE)
+
+df <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(df) <- c('file','inertia')
+for(file in list.files(path = "files", pattern = "*right_wing\\.(png|jpg)$")){
+  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+}
+write.csv(df, "right_wing.csv", row.names = FALSE)
