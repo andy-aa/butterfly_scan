@@ -45,5 +45,5 @@ img.rotated <- imrotate(img, -90-rotation_angle, boundary=1) %>% plot
 
 m <- (grayscale(img.rotated) < border_level) %>% plot
 
-volume <- sum(pi * (colSums(m) / 2 * pixel_size) * pixel_size) 
+volume <- sum(pi * (rowSums(m) / 2 * pixel_size) * pixel_size) 
 volume

@@ -3,7 +3,7 @@ if (!require("imager")) {
   library(imager)
 }
 
-body_volume <- function(file_name, split_level = .85){
+body_volume <- function(file_name, split_level = .85, pixel_size = 1){
   img <- load.image(file_name)
   img.black <- (grayscale(img) >= split_level)
   
@@ -36,10 +36,21 @@ body_volume <- function(file_name, split_level = .85){
   
   img.white <- (grayscale(img.rotated) < border_level)
   
-  volume <- sum(pi * (colSums(img.white) / 2 * pixel_size) * pixel_size) 
+  volume <- sum(pi * (rowSums(img.white) / 2 * pixel_size) * pixel_size) 
   
   return(volume)
 }
 
-body_volume("moth1.jpg")
+# body_volume("moth1.jpg")
+
+df <- data.frame(matrix(ncol = 2, nrow = 0))
+colnames(df) <- c('file','value')
+
+for(file in list.files(path = "files", pattern = "*body\\.(png|jpg)$")){
+  # print(file)
+  # print(body_volume(paste0('files/', file)))
+  df[nrow(df) + 1,] = c(file, body_volume(paste0('files/', file)))
+}
+
+write.csv(df, "data.csv", row.names = FALSE)
 
