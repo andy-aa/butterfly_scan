@@ -49,7 +49,7 @@ colnames(df) <- c('file','value')
 for(file in list.files(path = "files", pattern = "*body\\.(png|jpg)$")){
   # print(file)
   # print(body_volume(paste0('files/', file)))
-  df[nrow(df) + 1,] = c(file, body_volume(paste0('files/', file)))
+  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
 }
 
 write.csv(df, "data.csv", row.names = FALSE)
