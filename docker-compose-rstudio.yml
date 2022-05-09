@@ -1,0 +1,11 @@
+version: "3.9"
+services:
+  rstudio:
+    image: rstudio
+    build:
+      context: ./docker
+      dockerfile: rstudio.Dockerfile
+    volumes:
+      - .:/home/rstudio/work
+    ports:
+      - 8787:8787 

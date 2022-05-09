@@ -12,3 +12,21 @@ runnung docker container
 ```
 docker-compose up
 ```
+
+runnung jupyter docker container 
+
+```
+docker-compose -f docker-compose-jupyter.yml up -d
+```
+
+runnung rstudio docker container 
+
+```
+docker-compose -f docker-compose-rstudio.yml up -d
+```
+
+runnung Code-Server (VSCode) docker container 
+
+```
+docker-compose -f docker-compose-vscode.yml up -d
+```
