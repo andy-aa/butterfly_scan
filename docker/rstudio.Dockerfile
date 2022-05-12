@@ -8,6 +8,7 @@ RUN apt-get update
 # RUN apt-get install -y apt-utils 
 # RUN apt-get install -y dialog apt-utils
 RUN apt-get install -y mc vim
+RUN apt-get install -y texlive-full
 # RUN apt-get install -y libx11-dev
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -y -q libx11-dev xserver-xorg-dev xorg-dev
 # libx11-dev

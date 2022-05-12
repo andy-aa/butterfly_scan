@@ -34,7 +34,7 @@ body_volume <- function(file_name, split_level = .85, pixel_size = 1){
   
   img.rotated <- imrotate(img, -90-rotation_angle, boundary=1)
   
-  img.white <- (grayscale(img.rotated) < border_level)
+  img.white <- (grayscale(img.rotated) < split_level)
   
   volume <- sum(pi * (rowSums(img.white) / 2 * pixel_size) * pixel_size) 
   
@@ -84,3 +84,4 @@ for(file in list.files(path = "files", pattern = "*right_wing\\.(png|jpg)$")){
   df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
 }
 write.csv(df, "right_wing.csv", row.names = FALSE)
+

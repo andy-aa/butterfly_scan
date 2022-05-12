@@ -9,3 +9,5 @@ services:
       - .:/home/rstudio/work
     ports:
       - 8787:8787 
+    environment:
+      - PASSWORD=123
