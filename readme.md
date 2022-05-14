@@ -30,3 +30,8 @@ runnung Code-Server (VSCode) docker container
 ```
 docker-compose -f docker-compose-vscode.yml up -d
 ```
+
+run script with elapsed time measurement
+```
+Rscript -e 'system.time(source("run.R"))'
+```

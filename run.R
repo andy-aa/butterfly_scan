@@ -117,10 +117,12 @@ c('Name',
 
 dirs <- list.dirs(path = "files", full.names = FALSE, recursive=FALSE)
 
-i <- 0; n <- length(dirs)
+# i <- 0
+n <- length(dirs)
 
 for(dir in dirs){
-  progress(i <- i + 1, n)
+  # progress(i <- i + 1, n)
+  print(n<-n-1)
   
   file_right_wing <- file_path("right_wing", dir)
   file_left_wing <- file_path("left_wing", dir)
