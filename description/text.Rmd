@@ -3,74 +3,105 @@ title: "Butterfly scan"
 author: ''
 date: ''
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  word_document: default
+  pdf_document: default
+bibliography: references.bib
+csl: aims-mathematics.csl
+editor_options: 
+  markdown: 
+    wrap: 80
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
 The algorithms and programs described here are in the repository on GitHub:
 
-https://github.com/andy-aa/butterfly_scan
-
+<https://github.com/andy-aa/butterfly_scan>
 
 ## Calculation of the body volume of a butterfly
 
 The algorithm for estimating the volume of the body of a butterfly:
 
-1. Converting a color image to black and white. Three-channel RGB image → Single-channel grayscale image → Single-channel black and white images. When converting an image to black and white, it is necessary to use an empirical coefficient that is in the range from 0 to 1. The empirical coefficient is a color code used to separate all colors in an image into two groups, black and white.
+1.  Converting a color image to black and white. Three-channel RGB image →
+    Single-channel grayscale image → Single-channel black and white images. When
+    converting an image to black and white, it is necessary to use an empirical
+    coefficient that is in the range from 0 to 1. The empirical coefficient is a
+    color code used to separate all colors in an image into two groups, black
+    and white.
 
-![image info](./img/moth_body_0.png){height=150px}
-![image info](./img/moth_body_1.png){height=150px}
-![image info](./img/moth_body_2.png){height=150px}
+![](./img/moth_body_0.png){height="150px"}
+![](./img/moth_body_1.png){height="150px"}
+![](./img/moth_body_2.png){height="150px"}
 
-2. Search for the axis of rotation of an arbitrarily oriented body of a butterfly. The axis of rotation is a line connecting the two most distant points from each other. To reduce the search time, the convex hull of the figure is first constructed.
+2.  Search for the axis of rotation of an arbitrarily oriented body of a
+    butterfly. The axis of rotation is a line connecting the two most distant
+    points from each other. To reduce the search time, the convex hull of the
+    figure is first constructed.
 
-![](./img/moth_body_3.png){height=150px}
+![](./img/moth_body_3.png){height="150px"}
 
-3. In the set of points of the convex hull, we need to find two points that have a maximum distance function: $d = \sqrt{(x_1-x_2)^2 + (y_1-y_2)^2}$.
+3.  In the set of points of the convex hull, we need to find two points that
+    have a maximum distance function: $d = \sqrt{(x_1-x_2)^2 + (y_1-y_2)^2}$.
 
-![](./img/moth_body_4.png){height=150px}
+![](./img/moth_body_4.png){height="150px"}
 
-4. Finding the angle between the rotation axis and the x-axis. Rotate the image so that the rotation axis is perpendicular to the x-axis and parallel to the y-axis.
+4.  Finding the angle between the rotation axis and the x-axis. Rotate the image
+    so that the rotation axis is perpendicular to the x-axis and parallel to the
+    y-axis.
 
-![](./img/moth_body_5.png){height=150px}
-![](./img/moth_body_6.png){height=150px}
+![](./img/moth_body_5.png){height="150px"}
+![](./img/moth_body_6.png){height="150px"}
 
-5. Dividing the silhouette into layers parallel to the x-axis. Finding the width of each layer. The width ($w_i$) of a layer is equal to the number of pixels in that layer multiplied by the physical size of a pixel. The layer height ($h$) is equal to the physical pixel size. Layer volume is: $v_i = (w_i / 2) ^2 * pi * h$. The total volume (V) is the sum of the volumes of its layers $V = \sum_{i=1}^{n} v_i$.
+5.  Dividing the silhouette into layers parallel to the x-axis. Finding the
+    width of each layer. The width ($w_i$) of a layer is equal to the number of
+    pixels in that layer multiplied by the physical size of a pixel. The layer
+    height ($h$) is equal to the physical pixel size. Layer volume is:
+    $v_i = (w_i / 2) ^2 * pi * h$. The total volume (V) is the sum of the
+    volumes of its layers $V = \sum_{i=1}^{n} v_i$.
 
 ## Calculation of the moment of inertia of a butterfly wing
 
 The algorithm for estimating the moment of inertia of a butterfly wing:
 
-1. Converting a color image to black and white.
+1.  Converting a color image to black and white.
 
-![](./img/right_wing_0.png){height=150px}
-![](./img/right_wing_1.png){height=150px}
-![](./img/right_wing_2.png){height=150px}
+![](./img/right_wing_0.png){height="150px"}
+![](./img/right_wing_1.png){height="150px"}
+![](./img/right_wing_2.png){height="150px"}
 
-2. Calculation of the coordinates of the conditional center of mass.
-The classic formula for calculating the center of mass is: $\vec r_c= \frac{\sum \limits_i m_i \vec r_i}{\sum \limits_i m_i}$. 
-In the case of a two-dimensional object, the formula takes the form: 
-$x_c = \frac{\sum_{i=1}^{n} m_i x_i}{\sum_{i=1}^{n} m_i}$
-and
-$y_c = \frac{\sum_{i=1}^{n} m_i y_i}{\sum_{i=1}^{n} m_i}$;
-If we take the mass of each point equal to 1, the formulas are noticeably simplified: 
-$x_c = \bar{x}$
-and
-$y_c = \bar{y}$.
+2.  Calculation of the coordinates of the conditional center of mass. The
+    classic formula for calculating the center of mass is:
+    $\vec r_c= \frac{\sum \limits_i m_i \vec r_i}{\sum \limits_i m_i}$. In the
+    case of a two-dimensional object, the formula takes the form:
+    $x_c = \frac{\sum_{i=1}^{n} m_i x_i}{\sum_{i=1}^{n} m_i}$ and
+    $y_c = \frac{\sum_{i=1}^{n} m_i y_i}{\sum_{i=1}^{n} m_i}$; If we take the
+    mass of each point equal to 1, the formulas are noticeably simplified:
+    $x_c = \bar{x}$ and $y_c = \bar{y}$.
 
-![](./img/right_wing_3.png){height=150px}
+![](./img/right_wing_3.png){height="150px"}
 
-3. The classical formula for calculating the moment of inertia is: $J_a = \sum_{i=1}^n m_i r_i^2$, 
-where $m_i$ is the mass of $i$-th point; $r_i$ is the distance from the $i$-th point to the axis.
-If we take the mass of each point equal to 1, and for the point of the axis we take the center of mass, 
-the formula will take the form: $J_a = \sum_{i=1}^n r_i^2 = \sum_{i=1}^n ((x_i-x_c)^2 + (y_i-y_c)^2)$  
+3.  The classical formula for calculating the moment of inertia is:
+    $J_a = \sum_{i=1}^n m_i r_i^2$, where $m_i$ is the mass of $i$-th point;
+    $r_i$ is the distance from the $i$-th point to the axis. If we take the mass
+    of each point equal to 1, and for the point of the axis we take the center
+    of mass, the formula will take the form:
+    $J_a = \sum_{i=1}^n r_i^2 = \sum_{i=1}^n ((x_i-x_c)^2 + (y_i-y_c)^2)$
 
 ## Finding the wing mount
 
 To be continued...
+
+[@Triangle-area]
+
+$A = \frac{1}{2} \big| (x_1 - x_3) (y_2 - y_1) - (x_1 - x_2) (y_3 - y_1) \big|$
+
+<!-- [@R-base] -->
+
+# References
+
+::: {#refs}
+:::

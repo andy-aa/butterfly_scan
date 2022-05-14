@@ -22,15 +22,20 @@ lines(cloud[c(hpts, hpts[1]), ], col="red")
 
 comb <- combn(hpts, 2)
 
+distance <- function(x_1, y_1, x_2, y_2){
+  ((x_1 - x_2)^2 + (y_1 - y_2)^2)^.5
+}
+
 distances <- apply(
   comb,
   2,
   function(p){
-    (
-      (cloud[p[1], 2] - cloud[p[2], 2])^2
-      + 
-      (cloud[p[1], 1] - cloud[p[2], 1])^2
-    )^.5
+    distance(
+      x_1 = cloud[p[1], 2],
+      y_1 = cloud[p[1], 1],
+      x_2 = cloud[p[2], 2],
+      y_2 = cloud[p[2], 1]
+    )
   }
 )
 
@@ -47,3 +52,4 @@ m <- (grayscale(img.rotated) < border_level) %>% plot
 
 volume <- sum(pi * (rowSums(m) / 2 * pixel_size) * pixel_size) 
 volume
+

@@ -1,9 +1,13 @@
-if (!require("imager")) {
-  install.packages("imager")
-  library(imager)
-}
+suppressPackageStartupMessages(library(imager))
+suppressPackageStartupMessages(library(svMisc))
+
 
 body_volume <- function(file_name, split_level = .85, pixel_size = 1){
+  
+  distance <- function(x_1, y_1, x_2, y_2){
+    ((x_1 - x_2)^2 + (y_1 - y_2)^2)^.5
+  }
+  
   img <- load.image(file_name)
   img.black <- (grayscale(img) >= split_level)
   
@@ -20,11 +24,12 @@ body_volume <- function(file_name, split_level = .85, pixel_size = 1){
     comb,
     2,
     function(p){
-      (
-        (cloud[p[1], 2] - cloud[p[2], 2])^2
-        + 
-          (cloud[p[1], 1] - cloud[p[2], 1])^2
-      )^.5
+      distance(
+        x_1 = cloud[p[1], 2],
+        y_1 = cloud[p[1], 1],
+        x_2 = cloud[p[2], 2],
+        y_2 = cloud[p[2], 1]
+      )
     }
   )
   
@@ -63,25 +68,84 @@ wing_inertia <- function(file_name, split_level = .85){
 
 # wing_inertia("new_files/right_wing_a_fasciatus.png")
 
-df <- data.frame(matrix(ncol = 2, nrow = 0))
-colnames(df) <- c('file','volume')
-for(file in list.files(path = "files", pattern = "*body\\.(png|jpg)$")){
-  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+# df <- data.frame(matrix(ncol = 2, nrow = 0))
+# colnames(df) <- c('file','volume')
+# for(file in list.files(path = "files", pattern = "*body\\.(png|jpg)$")){
+#   df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+# }
+# write.csv(df, "body.csv", row.names = FALSE)
+# 
+# 
+# df <- data.frame(matrix(ncol = 2, nrow = 0))
+# colnames(df) <- c('file','inertia')
+# for(file in list.files(path = "files", pattern = "*left_wing\\.(png|jpg)$")){
+#   df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+# }
+# write.csv(df, "left_wing.csv", row.names = FALSE)
+# 
+# df <- data.frame(matrix(ncol = 2, nrow = 0))
+# colnames(df) <- c('file','inertia')
+# for(file in list.files(path = "files", pattern = "*right_wing\\.(png|jpg)$")){
+#   df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+# }
+# write.csv(df, "right_wing.csv", row.names = FALSE)
+
+
+# df <- (function(names) setNames(data.frame(matrix(ncol = length(names), nrow = 0)), names))(c('Name','inertia'))
+
+
+# df <- (function(names) setNames(data.frame(matrix(ncol = length(names), nrow = 0)), names))(c('Name','inertia'))
+
+
+# colnames(data.frame(matrix(ncol = 2, nrow = 0)))<- c('Name','inertia')
+
+# df <- data.frame(matrix(ncol = 2, nrow = 0))
+# colnames(df) <- c('Name','inertia')
+
+file_path <- function(postfix, subfolder, base_folder="files"){
+  list.files(
+    path = paste0(base_folder, "/", subfolder), 
+    pattern = paste0("*", postfix, "\\.(png|jpg)$")
+    )[1]
 }
-write.csv(df, "body.csv", row.names = FALSE)
 
+c('Name', 
+  'body_volume', 
+  "right_wing_inertia", 
+  "left_wing_inertia"
+) %>% setNames(data.frame(matrix(ncol = length(.), nrow = 0)), .) -> df
 
-df <- data.frame(matrix(ncol = 2, nrow = 0))
-colnames(df) <- c('file','inertia')
-for(file in list.files(path = "files", pattern = "*left_wing\\.(png|jpg)$")){
-  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
+dirs <- list.dirs(path = "files", full.names = FALSE, recursive=FALSE)
+
+i <- 0; n <- length(dirs)
+
+for(dir in dirs){
+  progress(i <- i + 1, n)
+  
+  file_right_wing <- file_path("right_wing", dir)
+  file_left_wing <- file_path("left_wing", dir)
+  file_body <- file_path("body", dir)
+
+  df[nrow(df) + 1,] <- c(
+    dir,
+    
+    if(is.na(file_body)) 
+      NA 
+    else 
+      body_volume(paste0("files/", dir, "/", file_body)),
+    
+    if(is.na(file_right_wing)) 
+      NA 
+    else 
+      wing_inertia(paste0("files/", dir, "/", file_right_wing)),
+    
+    if(is.na(file_left_wing)) 
+      NA 
+    else 
+      wing_inertia(paste0("files/", dir, "/", file_left_wing))
+  )
+  
 }
-write.csv(df, "left_wing.csv", row.names = FALSE)
 
-df <- data.frame(matrix(ncol = 2, nrow = 0))
-colnames(df) <- c('file','inertia')
-for(file in list.files(path = "files", pattern = "*right_wing\\.(png|jpg)$")){
-  df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
-}
-write.csv(df, "right_wing.csv", row.names = FALSE)
-
+write.csv(df, "data.csv", row.names = FALSE)
+message("Done!")
