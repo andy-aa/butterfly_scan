@@ -1,12 +1,12 @@
-suppressPackageStartupMessages(library(imager))
-suppressPackageStartupMessages(library(svMisc))
+library(imager)
+# suppressPackageStartupMessages(library(svMisc))
 
+
+distance <- function(x_1, y_1, x_2, y_2){    
+  ((x_1 - x_2)^2 + (y_1 - y_2)^2)^.5
+}
 
 body_volume <- function(file_name, split_level = .85, pixel_size = 1){
-  
-  distance <- function(x_1, y_1, x_2, y_2){
-    ((x_1 - x_2)^2 + (y_1 - y_2)^2)^.5
-  }
   
   img <- load.image(file_name)
   img.black <- (grayscale(img) >= split_level)
@@ -55,11 +55,11 @@ wing_inertia <- function(file_name, split_level = .85){
     arr.ind = T
   )
   
-  x <- mean(cloud[,c('row')])
+  x_c <- mean(cloud[,c('row')])
   
-  y <- mean(cloud[,c('col')])
+  y_c <- mean(cloud[,c('col')])
   
-  inertia <- sum((cloud[,c('row')] - x)^2 + (cloud[,c('col')] - y)^2)
+  inertia <- sum((cloud[,c('row')] - x_c)^2 + (cloud[,c('col')] - y_c)^2)
   
   return(inertia)
 }
@@ -117,12 +117,11 @@ c('Name',
 
 dirs <- list.dirs(path = "files", full.names = FALSE, recursive=FALSE)
 
-# i <- 0
-n <- length(dirs)
+i <- 0; n <- length(dirs) 
 
 for(dir in dirs){
-  # progress(i <- i + 1, n)
-  print(n<-n-1)
+  # cat(sprintf("\r%.0f on %.0f", i <- i + 1, n))
+  cat(paste0('\r', i<- i + 1, " on ", n))
   
   file_right_wing <- file_path("right_wing", dir)
   file_left_wing <- file_path("left_wing", dir)
@@ -146,8 +145,8 @@ for(dir in dirs){
     else 
       wing_inertia(paste0("files/", dir, "/", file_left_wing))
   )
-  
+
 }
 
 write.csv(df, "data.csv", row.names = FALSE)
-message("Done!")
+message("\nDone!")

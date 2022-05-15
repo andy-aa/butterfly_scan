@@ -7,6 +7,7 @@ pixel_size <- 1
 border_level <- .85
 
 img <- load.image("moth1.jpg") %>% plot
+# img <- load.image("new_files/left_wing_a_fasciatus.png") %>% plot
 
 img.gray <- grayscale(img) %>% plot
 img.black <- (img.gray >= border_level) %>% plot

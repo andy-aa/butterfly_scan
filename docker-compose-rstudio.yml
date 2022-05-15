@@ -11,3 +11,4 @@ services:
       - 8787:8787 
     environment:
       - PASSWORD=123
+      - DISABLE_AUTH=true
