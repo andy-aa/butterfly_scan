@@ -35,37 +35,67 @@ y_c <- mean(cloud[,'y'])
 points(x=x_c, y=y_c, col='red', pch=4, cex=3)
 
 
-J <- sum((cloud[,c('x')] - x_c)^2 + (cloud[,c('y')] - y_c)^2)
+J <- sum((cloud[,'x'] - x_c)^2 + (cloud[,'y'] - y_c)^2)
 
-
-hpts <- chull(cloud)
-
+system.time(
+  hpts <- chull(cloud)
+)
 # AreaX <- function(i,h=chull(i),j=c(h,h[1]))round((i[h,1]+i[j[-1],1])%*%diff(-i[j,2])/2)
 
-
+Area3 <- function(x_1, y_1, x_2, y_2, x_3, y_3){
+  abs((x_1 - x_3) * (y_2 - y_1) - (x_1 - x_2) * (y_3 - y_1))/2
+}
 
 S3 <-function(p){
-  abs((cloud[p,][1,"x"] - cloud[p,][3,"x"]) * (cloud[p,][2,"y"] - cloud[p,][1,"y"]) - (cloud[p,][1,"x"] - cloud[p,][2,"x"]) * (cloud[p,][3,"y"] - cloud[p,][1,"y"]))/2
-  # Area3 <- function(x_1, y_1, x_2, y_2, x_3, y_3){
-  #   abs((x_1 - x_3) * (y_2 - y_1) - (x_1 - x_2) * (y_3 - y_1))/2
-  # }
+  # abs(
+  #     (cloud[p,"x"][1] - cloud[p,"x"][3])
+  #   *
+  #     (cloud[p,"y"][2] - cloud[p,"y"][1])
+  #   -
+  #     (cloud[p,"x"][1] - cloud[p,"x"][2])
+  #   *
+  #     (cloud[p,"y"][3] - cloud[p,"y"][1])
+  # )/2
+
+  x <- cloud[p,"x"]
+  y <- cloud[p,"y"]
+  
+  abs((x[1] - x[3]) * (y[2] - y[1]) - (x[1] - x[2]) * (y[3] - y[1]))/2
+  
+    
+  # abs(
+  #   (cloud[p[1],"x"] - cloud[p[3],"x"])
+  #   *
+  #   (cloud[p[2],"y"] - cloud[p[1],"y"])
+  #   -
+  #   (cloud[p[1],"x"] - cloud[p[2],"x"])
+  #   *
+  #   (cloud[p[3],"y"] - cloud[p[1],"y"])
+  # )/2
+
+  # pp <- cloud[p,]
+  # 
+  #   abs(
+  #     (pp[1,"x"] - pp[3,"x"])
+  #   *
+  #     (pp[2,"y"] - pp[1,"y"])
+  #   -
+  #     (pp[1,"x"] - pp[2,"x"])
+  #   *
+  #     (pp[3,"y"] - pp[1,"y"])
+  # )/2
+  
   # Area3(
-  #   x_1=cloud[p,][1,"x"],
-  #   y_1=cloud[p,][1,"y"],
-  #   x_2=cloud[p,][2,"x"],
-  #   y_2=cloud[p,][2,"y"],
-  #   x_3=cloud[p,][3,"x"],
-  #   y_3=cloud[p,][3,"y"]
+  #   x_1=cloud[p,"x"][1],
+  #   y_1=cloud[p,"y"][1],
+  #   x_2=cloud[p,"x"][2],
+  #   y_2=cloud[p,"y"][2],
+  #   x_3=cloud[p,"x"][3],
+  #   y_3=cloud[p,"y"][3]
   # )
 }
 
-S4 <- function(p){
-  S3(p[c(1,2,3)]) + S3(p[c(1,3,4)])
-}
 
-S5 <- function(p){
-  S4(p[c(1,2,3,4)]) + S3(p[c(1,4,5)])
-}
 
 
 
@@ -77,13 +107,26 @@ S5 <- function(p){
 #   Area4(x_1, y_1, x_2, y_2, x_3, y_3, x_4, y_4) + Area3(x_1, y_1, x_4, y_4, x_5, y_5)
 # }
 
+system.time(
+  comb <- combn(hpts, 3)
+)
 
-comb <- combn(hpts, 3)
+system.time({
+  # areas <- combn(hpts, 3, function(p){S3(p)})
+  a <- 0
+  combn(hpts, 5, function(p){if((tmp <- S5(p)) > a) {pp <<- cloud[p,]; a <<- tmp}; 0})
+})
+
+img %>% plot(ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.1))
+pp %>% {polygon(., col=rgb(1, 0, 0, 0.2), border = "red"); points(., col='red', pch=4, cex=2, lwd=1)}
+
 # colnames(comb)
 
-system.time(
+system.time({
+  comb <- combn(hpts, 3)
   areas <- apply(comb, 2, function(p){S3(p)})
-)
+  pp3 <- cloud[comb[,which.max(areas)],]
+})
 
 # areas <- apply(
 #   comb,
@@ -124,7 +167,6 @@ system.time(
 #   }
 # )
 
-pp3 <- cloud[comb[,which.max(areas)],]
 
 # img %>% plot(., ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.1))
 # polygon(pp, col=rgb(0, 1, 1, 0.2))
@@ -160,7 +202,7 @@ system.time(
 
 pp4 <- cloud[comb[,which.max(areas)],]
 
-img %>% plot(ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.1))
+# img %>% plot(ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.1))
 pp4 %>% polygon(col=rgb(0, 1, 0, 0.2), border = "green")
 pp4 %>% points(col='green', pch=4, cex=2, lwd=1)
 
@@ -193,5 +235,6 @@ system.time(
 
 pp5 <- cloud[comb[,which.max(areas)],]
 
-img %>% plot(ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.1))
+# img %>% plot(ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.1))
 pp5 %>% polygon(col=rgb(0, 0, 1, 0.2), border = "blue")
+pp5 %>% points(col='blue', pch=4, cex=2, lwd=1)
