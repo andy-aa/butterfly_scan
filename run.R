@@ -1,9 +1,10 @@
 library(imager)
-# suppressPackageStartupMessages(library(svMisc))
 
-
-distance <- function(x_1, y_1, x_2, y_2){    
-  ((x_1 - x_2)^2 + (y_1 - y_2)^2)^.5
+d2 <- function(data){
+  x <- data[,"x"]
+  y <- data[,"y"]
+  
+  sqrt((x[1] - x[2])^2 + (y[1] - y[2])^2)
 }
 
 body_volume <- function(file_name, split_level = .85, pixel_size = 1){
@@ -11,96 +12,66 @@ body_volume <- function(file_name, split_level = .85, pixel_size = 1){
   img <- load.image(file_name)
   img.black <- (grayscale(img) >= split_level)
   
-  cloud <- which(
-    matrix(img.black, dim(img.black)[1], dim(img.black)[2]) == FALSE,
-    arr.ind = T
-  )
+  cloud <- which(img.black %>% matrix(., dim(.)[1], dim(.)[2]) == FALSE, arr.ind = T)
+  colnames(cloud) <- c("x", "y")
   
   hpts <- chull(cloud)
   
   comb <- combn(hpts, 2)
   
-  distances <- apply(
-    comb,
-    2,
-    function(p){
-      distance(
-        x_1 = cloud[p[1], 2],
-        y_1 = cloud[p[1], 1],
-        x_2 = cloud[p[2], 2],
-        y_2 = cloud[p[2], 1]
-      )
-    }
-  )
+  distances <- apply(comb, 2,  function(p){d2(cloud[p,])})
   
   pp <- cloud[comb[,which.max(distances)],]
   
-  rotation_angle <- atan((pp[1,2] - pp[2,2]) / (pp[1,1] - pp[2,1])) * 180 / pi
-  
+  rotation_angle <- atan((pp[1,'y'] - pp[2,'y']) / (pp[1,'x'] - pp[2,'x'])) * 180 / pi
+
   img.rotated <- imrotate(img, -90-rotation_angle, boundary=1)
   
   img.white <- (grayscale(img.rotated) < split_level)
   
   volume <- sum(pi * (rowSums(img.white) / 2 * pixel_size) * pixel_size) 
   
-  return(volume)
+  height <- max(rowSums(img.white))
+  width <- max(colSums(img.white))
+  area <- sum(img.white)
+  
+  # return(volume)
+  return(list(
+    volume=volume,
+    area=area,
+    height=height,
+    width=width
+  ))
+  
 }
 
-wing_inertia <- function(file_name, split_level = .85){
+wing_inertia <- function(file_name, split_level = .85, left=TRUE){
   
   img.black <- (grayscale(load.image(file_name)) >= split_level)
   
-  cloud <- which(
-    matrix(img.black, dim(img.black)[1], dim(img.black)[2]) == FALSE,
-    arr.ind = T
-  )
+  cloud <- which(img.black %>% matrix(., dim(.)[1], dim(.)[2]) == FALSE, arr.ind = T)
+  colnames(cloud) <- c("x", "y")
+
+  x <- cloud[,c('x')]
+  y <- cloud[,c('y')]
   
-  x_c <- mean(cloud[,c('row')])
+  x_c <- mean(x)
+  y_c <- mean(y)
   
-  y_c <- mean(cloud[,c('col')])
+  J_p <- sum((x - x_c)^2 + (y - y_c)^2)
   
-  inertia <- sum((cloud[,c('row')] - x_c)^2 + (cloud[,c('col')] - y_c)^2)
+  x_a <- if(left) max(x) else min(x)
   
-  return(inertia)
+  J_a <- sum((x - x_a)^2)
+  
+  
+  return(list(
+    J_p=J_p,
+    J_a=J_a,
+    area=length(cloud)
+  ))
 }
 
-# body_volume("moth1.jpg")
-
-# wing_inertia("new_files/right_wing_a_fasciatus.png")
-
-# df <- data.frame(matrix(ncol = 2, nrow = 0))
-# colnames(df) <- c('file','volume')
-# for(file in list.files(path = "files", pattern = "*body\\.(png|jpg)$")){
-#   df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
-# }
-# write.csv(df, "body.csv", row.names = FALSE)
-# 
-# 
-# df <- data.frame(matrix(ncol = 2, nrow = 0))
-# colnames(df) <- c('file','inertia')
-# for(file in list.files(path = "files", pattern = "*left_wing\\.(png|jpg)$")){
-#   df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
-# }
-# write.csv(df, "left_wing.csv", row.names = FALSE)
-# 
-# df <- data.frame(matrix(ncol = 2, nrow = 0))
-# colnames(df) <- c('file','inertia')
-# for(file in list.files(path = "files", pattern = "*right_wing\\.(png|jpg)$")){
-#   df[nrow(df) + 1,] <- c(file, body_volume(paste0('files/', file)))
-# }
-# write.csv(df, "right_wing.csv", row.names = FALSE)
-
-
-# df <- (function(names) setNames(data.frame(matrix(ncol = length(names), nrow = 0)), names))(c('Name','inertia'))
-
-
-# df <- (function(names) setNames(data.frame(matrix(ncol = length(names), nrow = 0)), names))(c('Name','inertia'))
-
-
-# colnames(data.frame(matrix(ncol = 2, nrow = 0)))<- c('Name','inertia')
-
-# df <- data.frame(matrix(ncol = 2, nrow = 0))
-# colnames(df) <- c('Name','inertia')
 
 file_path <- function(postfix, subfolder, base_folder="files"){
   list.files(
@@ -110,17 +81,28 @@ file_path <- function(postfix, subfolder, base_folder="files"){
 }
 
 c('Name', 
+
   'body_volume', 
-  "right_wing_inertia", 
-  "left_wing_inertia"
+  'body_area',
+  'body_height',
+  'body_width',
+  
+  "right_wing_inertia_polar", 
+  "right_wing_inertia_axis", 
+  "right_wing_area",
+  
+  "left_wing_inertia_polar", 
+  "left_wing_inertia_axis", 
+  "left_wing_area"
 ) %>% setNames(data.frame(matrix(ncol = length(.), nrow = 0)), .) -> df
 
 dirs <- list.dirs(path = "files", full.names = FALSE, recursive=FALSE)
 
+# system.time({
+  
 i <- 0; n <- length(dirs) 
 
 for(dir in dirs){
-  # cat(sprintf("\r%.0f on %.0f", i <- i + 1, n))
   cat(paste0('\r', i<- i + 1, " on ", n))
   
   file_right_wing <- file_path("right_wing", dir)
@@ -131,22 +113,24 @@ for(dir in dirs){
     dir,
     
     if(is.na(file_body)) 
-      NA 
-    else 
-      body_volume(paste0("files/", dir, "/", file_body)),
+      rep(NA, 4)
+    else
+      as.vector(body_volume(paste0("files/", dir, "/", file_body))),
     
     if(is.na(file_right_wing)) 
-      NA 
-    else 
-      wing_inertia(paste0("files/", dir, "/", file_right_wing)),
+      rep(NA, 3) 
+    else
+      as.vector(wing_inertia(paste0("files/", dir, "/", file_right_wing), left = FALSE)),
     
     if(is.na(file_left_wing)) 
-      NA 
+      rep(NA, 3) 
     else 
-      wing_inertia(paste0("files/", dir, "/", file_left_wing))
+      as.vector(wing_inertia(paste0("files/", dir, "/", file_left_wing), left = TRUE))
   )
 
 }
+
+# })
 
 write.csv(df, "data.csv", row.names = FALSE)
 message("\nDone!")

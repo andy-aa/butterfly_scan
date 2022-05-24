@@ -17,13 +17,10 @@ img.gray <- grayscale(img) %>% plot
 img.black <- (img.gray >= border_level) %>% plot
 
 # cannyEdges(img.black) %>% plot
-
-cloud <- which(
-  matrix(img.black, dim(img.black)[1], dim(img.black)[2]) == FALSE,
-  arr.ind = T
-)
-
-colnames(cloud) <- c("x", "y")
+{
+  cloud <- which(img.black %>% matrix(., dim(.)[1], dim(.)[2]) == FALSE, arr.ind = T)
+  colnames(cloud) <- c("x", "y")
+}
 
 x_c <- mean(cloud[,'x'])
 
@@ -34,8 +31,22 @@ y_c <- mean(cloud[,'y'])
 
 points(x=x_c, y=y_c, col='red', pch=4, cex=3)
 
+J_p <- sum((cloud[,'x'] - x_c)^2 + (cloud[,'y'] - y_c)^2)
 
-J <- sum((cloud[,'x'] - x_c)^2 + (cloud[,'y'] - y_c)^2)
+axis_distance <- 0
+x_a <- max(cloud[,'x']) + axis_distance
+
+J_a <- sum((cloud[,'x'] - x_a)^2)
+
+
+img %>% plot(ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.5))
+abline(v = (max(cloud[,'x']) + axis_distance), col="red")
+
+
+
+
+
+
 
 system.time(
   hpts <- chull(cloud)

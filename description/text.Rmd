@@ -3,12 +3,17 @@ title: "Butterfly scan"
 author: ''
 date: ''
 output:
+  pdf_document: 
+    fig_caption: yes
+    keep_tex: yes
+    includes:        
+      in_header: header.tex
   html_document:
     df_print: paged
   word_document: default
-  pdf_document: default
 bibliography: references.bib
 csl: aims-mathematics.csl
+link-citations: yes
 editor_options: 
   markdown: 
     wrap: 80
@@ -22,6 +27,10 @@ The algorithms and programs described here are in the repository on GitHub:
 
 <https://github.com/andy-aa/butterfly_scan>
 
+The algorithms are implemented in the R programming language[@R-base].
+ 
+
+
 ## Calculation of the body volume of a butterfly
 
 The algorithm for estimating the volume of the body of a butterfly:
@@ -33,35 +42,35 @@ The algorithm for estimating the volume of the body of a butterfly:
     color code used to separate all colors in an image into two groups, black
     and white.
 
-![](./img/moth_body_0.png){height="150px"}
-![](./img/moth_body_1.png){height="150px"}
-![](./img/moth_body_2.png){height="150px"}
+![Color image](./img/moth_body_0.png){height="150px"}
+![Grayscale](./img/moth_body_1.png){height="150px"} ![Black and
+white](./img/moth_body_2.png){height="150px"}
 
 2.  Search for the axis of rotation of an arbitrarily oriented body of a
     butterfly. The axis of rotation is a line connecting the two most distant
     points from each other. To reduce the search time, the convex hull of the
     figure is first constructed.
 
-![](./img/moth_body_3.png){height="150px"}
+![Convex hull](./img/moth_body_3.png){height="300px"}
 
 3.  In the set of points of the convex hull, we need to find two points that
     have a maximum distance function: $d = \sqrt{(x_1-x_2)^2 + (y_1-y_2)^2}$.
 
-![](./img/moth_body_4.png){height="150px"}
+![Axis of rotation](./img/moth_body_4.png){height="300px"}
 
 4.  Finding the angle between the rotation axis and the x-axis. Rotate the image
     so that the rotation axis is perpendicular to the x-axis and parallel to the
     y-axis.
 
-![](./img/moth_body_5.png){height="150px"}
-![](./img/moth_body_6.png){height="150px"}
+![After rotation](./img/moth_body_5.png){height="150px"} ![Contrast
+figure](./img/moth_body_6.png){height="150px"}
 
-5.  Dividing the silhouette into layers parallel to the x-axis. Finding the
-    width of each layer. The width ($w_i$) of a layer is equal to the number of
-    pixels in that layer multiplied by the physical size of a pixel. The layer
-    height ($h$) is equal to the physical pixel size. Layer volume is:
-    $v_i = (w_i / 2) ^2 * pi * h$. The total volume (V) is the sum of the
-    volumes of its layers $V = \sum_{i=1}^{n} v_i$.
+5.  Dividing the silhouette (contour) into layers parallel to the x-axis.
+    Finding the width of each layer. The width ($w_i$) of a layer is equal to
+    the number of pixels in that layer multiplied by the physical size of a
+    pixel. The layer height ($h$) is equal to the physical pixel size. Layer
+    volume is: $v_i = (w_i / 2) ^2 * pi * h$. The total volume (V) is the sum of
+    the volumes of its layers $V = \sum_{i=1}^{n} v_i$.
 
 ## Calculation of the moment of inertia of a butterfly wing
 
@@ -84,22 +93,86 @@ The algorithm for estimating the moment of inertia of a butterfly wing:
 
 ![](./img/right_wing_3.png){height="150px"}
 
-3.  The classical formula for calculating the moment of inertia is:
-    $J_a = \sum_{i=1}^n m_i r_i^2$, where $m_i$ is the mass of $i$-th point;
+3.  The classical formula for calculating the ***moment of inertia*** is:
+    $J_p = \sum_{i=1}^n m_i r_i^2$, where $m_i$ is the mass of $i$-th point;
     $r_i$ is the distance from the $i$-th point to the axis. If we take the mass
     of each point equal to 1, and for the point of the axis we take the center
-    of mass, the formula will take the form:
-    $J_a = \sum_{i=1}^n r_i^2 = \sum_{i=1}^n ((x_i-x_c)^2 + (y_i-y_c)^2)$
+    of mass, the formula for ***polar moment of inertia*** will take the form:
+    $J_p = \sum_{i=1}^n r_i^2 = \sum_{i=1}^n ((x_i-x_c)^2 + (y_i-y_c)^2)$
 
-## Finding the wing mount
+4.  In our case ***moment of inertia about the axis*** will be calculated
+    relative to the wing attachment line. This is due to the way the wing is
+    attached to the body and how it moves during flight [@Insect-flight].
+    The formula for calculating the moment of inertia about the axis will take the form::
+    $J_a = \sum_{i=1}^n r_i^2 = \sum_{i=1}^n (x_i-x_a)^2$,
+    where $x_a$ is the distance to the axis of rotation.
+    
+![](./img/Moment_of_inertia_about_the_axis.png){height="200px"}
 
-To be continued...
 
-[@Triangle-area]
+## Geometric classification and measurement of wing parameters
 
-$A = \frac{1}{2} \big| (x_1 - x_3) (y_2 - y_1) - (x_1 - x_2) (y_3 - y_1) \big|$
+In order to highlight the characteristic features of the butterfly wings, it is
+of interest to approximate the butterfly wing using polygons[@Bronstein2008]. A
+simplified representation of a wings shape allows you to highlight the main
+geometric properties.
+
+### Left wing of Hemaris diffinis
+
+![Threangle](./img/Areas_3_Hemaris_diffinis_left_wing.png){height="300px"}
+
+![Quadrangle](./img/Areas_4_Hemaris_diffinis_left_wing.png){height="300px"}
+
+![Pentagon](./img/Areas_5_Hemaris_diffinis_left_wing.png){height="300px"}
+
+![Hexagon](./img/Areas_6_Hemaris_diffinis_left_wing.png){height="300px"}
+ 
+![Superposition of
+polygons](./img/Areas_3_4_5_6_Hemaris_diffinis_left_wing.png){height="300px"}
+
+### Left wing of Manduca rustica
+
+![Threangle](./img/Areas_3_Manduca_rustica_left_wing.png){height="300px"}
+
+![Quadrangle](./img/Areas_4_Manduca_rustica_left_wing.png){height="300px"}
+
+![Pentagon](./img/Areas_5_Manduca_rustica_left_wing.png){height="300px"}
+
+![Hexagon](./img/Areas_6_Manduca_rustica_left_wing.png){height="300px"}
+
+![Superposition of polygons](./img/Areas_3_4_5_6_Manduca_rustica_left_wing.png){height="300px"}
+
+<!-- [@Triangle-area] -->
+
+<!-- $A = \frac{1}{2} \big| (x_1 - x_3) (y_2 - y_1) - (x_1 - x_2) (y_3 - y_1) \big|$ -->
 
 <!-- [@R-base] -->
+
+### Butterfly wing boundary definition
+
+To find the boundaries of objects in images, one of the most common algorithms is the Canny algorithm [@Canny-edge].
+
+![Finding edges in a color image](./img/Canny_edge_0.png){width="700px"}
+
+When using this algorithm, the boundaries will be found not only outside the object but also inside. To avoid this, we can first convert the image to black and white. The disadvantage of using this algorithm is that at the output we have an unordered point cloud, which is the edge of the object.
+
+![Finding edges in a contrasting black and white image](./img/Canny_edge_1.png){height="700px"}
+
+The boundary of the butterfly wing object is actually a concave hull. One of the algorithms for finding the edges of a concave hull is the Alpha shape algorithm [@Alpha-shape]. 
+
+![Concave Hull of a wing object](./img/Alpha_shape_0.png){height="700px"}
+
+As a result of the Alpha shape algorithm, we can get a polygon that does not intersect itself and has no holes. To find the area of such polygon, we can use the shoelace Gauss algorithm. [@Shoelace-formula] 
+
+![Concave hull after minimizing the number of points](./img/Alpha_shape_1.png){height="700px"}
+
+## To be continued...
+
+![At the moment, the results of the calculations look like this](./img/data.png){height="400px"}
+
+
+![](./img/convex_triangles.png){height="250px"}
+![](./img/edge_triangles.png){height="250px"}
 
 # References
 
