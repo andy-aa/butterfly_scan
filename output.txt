@@ -1,0 +1,18 @@
+/var/spool/pbs/mom_priv/jobs/5114108.pbs02.SC: line 14: cd: /home/adziahi/byttefly/byttefly_scan: No such file or directory
+Fatal error: cannot open file 'run.R': No such file or directory
+ 
+ 
++------------------------------------------+ 
+| PALMETTO CLUSTER PBS RESOURCES REQUESTED | 
++------------------------------------------+ 
+ 
+mem=10gb,walltime=00:30:00,ncpus=10
+ 
+ 
++-------------------------------------+ 
+| PALMETTO CLUSTER PBS RESOURCES USED | 
++-------------------------------------+ 
+ 
+cput=00:00:01,mem=49100kb,walltime=00:00:03,ncpus=10,cpupercent=0,vmem=9792kb
+ 
+ 
