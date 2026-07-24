@@ -12,9 +12,18 @@ border_level <- .85
 # img <- load.image("new_files/left_wing_a_fasciatus.png") %>% plot
 # img <- load.image("new_files/right_wing_a_fasciatus.png") %>% plot
 
-img <- load.image("files/Agrius cingulata/Agrius_cingulata_left_wing.png") %>% plot
-img.gray <- grayscale(img) %>% plot
-img.black <- (img.gray >= border_level) %>% plot
+img <- load.image("files/Agrius cingulata/Agrius_cingulata_left_wing.png")
+img.gray <- grayscale(img)
+img.black <- (img.gray >= border_level)
+
+{
+  par(mfrow=c(1,3), mar=c(5.1, 3.1, 1.1, 1.0))
+  img %>% {plot(.); title(sub = 'original')}
+  img.gray %>% {plot(.); title(sub = 'grayscale')}
+  img.black %>% {plot(.); title(sub = 'black and white')}
+  par(mfrow = c(1,1))
+}
+
 
 # cannyEdges(img.black) %>% plot
 {
@@ -29,7 +38,6 @@ y_c <- mean(cloud[,'y'])
 # max(cloud[,c('row')])
 # max(cloud[,c('col')])
 
-points(x=x_c, y=y_c, col='red', pch=4, cex=3)
 
 J_p <- sum((cloud[,'x'] - x_c)^2 + (cloud[,'y'] - y_c)^2)
 
@@ -40,10 +48,19 @@ J_a <- sum((cloud[,'x'] - x_a)^2)
 
 
 img %>% plot(ylim=c(dim(.)[2]*1.1, -dim(.)[2]*.1), xlim=c(-dim(.)[1]*.1, dim(.)[1]*1.5))
+points(x=x_c, y=y_c, col='red', pch=4, cex=3)
 abline(v = (max(cloud[,'x']) + axis_distance), col="red")
 
 
-
+{
+  par(mfrow=c(1, 2), mar=c(5.1, 3.1, 1.1, 1.0))
+  img %>% {plot(.); title(sub = 'center of mass')}
+  points(x=x_c, y=y_c, col='red', pch=4, cex=3)
+  # points(x=x_c, y=y_c, col='red', pch=4, cex=3)
+  img %>% {plot(.); title(sub = 'axis of rotation')}
+  abline(v = (max(cloud[,'x']) + axis_distance), col="red")
+  par(mfrow = c(1,1))
+}
 
 
 

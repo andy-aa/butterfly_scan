@@ -51,12 +51,13 @@ white](./img/moth_body_2.png){height="150px"}
     points from each other. To reduce the search time, the convex hull of the
     figure is first constructed.
 
-![Convex hull](./img/moth_body_3.png){height="300px"}
+![Convex hull](./img/moth_body_3.png){height="200px"}
 
 3.  In the set of points of the convex hull, we need to find two points that
     have a maximum distance function: $d = \sqrt{(x_1-x_2)^2 + (y_1-y_2)^2}$.
 
-![Axis of rotation](./img/moth_body_4.png){height="300px"}
+![Axis of rotation](./img/moth_body_4.png){height="200px"}
+
 
 4.  Finding the angle between the rotation axis and the x-axis. Rotate the image
     so that the rotation axis is perpendicular to the x-axis and parallel to the
@@ -119,6 +120,7 @@ geometric properties.
 
 ### Left wing of Hemaris diffinis
 
+
 ![Threangle](./img/Areas_3_Hemaris_diffinis_left_wing.png){height="300px"}
 
 ![Quadrangle](./img/Areas_4_Hemaris_diffinis_left_wing.png){height="300px"}
@@ -127,8 +129,8 @@ geometric properties.
 
 ![Hexagon](./img/Areas_6_Hemaris_diffinis_left_wing.png){height="300px"}
  
-![Superposition of
-polygons](./img/Areas_3_4_5_6_Hemaris_diffinis_left_wing.png){height="300px"}
+![Superposition of polygons](./img/Areas_3_4_5_6_Hemaris_diffinis_left_wing.png){height="300px"}
+
 
 ### Left wing of Manduca rustica
 
@@ -166,13 +168,43 @@ As a result of the Alpha shape algorithm, we can get a polygon that does not int
 
 ![Concave hull after minimizing the number of points](./img/Alpha_shape_1.png){height="700px"}
 
-## To be continued...
+## Running the program for execution
+Image files should be located as shown in the following figure.
 
-![At the moment, the results of the calculations look like this](./img/data.png){height="400px"}
+![Folder tree](./img/files.png)
+
+For each individual moth, a folder should be created with the same name as the name of the insect.
+This name will later be inserted into the results table. Inside the folder there must be files whose names can be anything, but at the end of the file name there must be postfixes: **body**, **left_wing** or **right_wing**. 
+
+To run the program for execution, you need to open the file in the **Rstudio** program and execute the command **Code** → **Source**
+
+![Folder tree](./img/RStudio.png)
+After execution, a file called **data.csv** will appear in the folder.
+
+![The results of the calculations](./img/data.png){width="600px"}
 
 
-![](./img/convex_triangles.png){height="250px"}
-![](./img/edge_triangles.png){height="250px"}
+To run the program on *Palmetto* cluster for high performance, you need to execute the the following commands.
+
+Copy files to palmetto:
+```
+$ git clone https://github.com/andy-aa/butterfly_scan.git
+```
+
+Make a reservation computing node:
+```
+$ qsub -I -l select=1:ncpus=4:mem=10gb:interconnect=1g,walltime=2:00:00
+```
+Load the R language module:
+```
+$ module load r/4.1.2-gcc/8.4.1
+```
+Run script for execution:
+```
+$ Rscript run.R
+```
+
+
 
 # References
 

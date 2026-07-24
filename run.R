@@ -1,4 +1,7 @@
-library(imager)
+if (!require("imager")) {
+  install.packages("imager")
+  library(imager)
+}
 
 d2 <- function(data){
   x <- data[,"x"]

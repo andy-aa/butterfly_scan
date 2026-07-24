@@ -143,7 +143,7 @@ The algorithm for estimating the volume of the body of a butterfly:
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth,height=3.125in]{./img/moth_body_3.png}
+\includegraphics[width=\textwidth,height=2.08333in]{./img/moth_body_3.png}
 \caption{Convex hull}
 \end{figure}
 
@@ -159,7 +159,7 @@ The algorithm for estimating the volume of the body of a butterfly:
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth,height=3.125in]{./img/moth_body_4.png}
+\includegraphics[width=\textwidth,height=2.08333in]{./img/moth_body_4.png}
 \caption{Axis of rotation}
 \end{figure}
 
@@ -372,17 +372,63 @@ we can use the shoelace Gauss algorithm.
 \caption{Concave hull after minimizing the number of points}
 \end{figure}
 
-\hypertarget{to-be-continued}{%
-\subsection{To be continued\ldots{}}\label{to-be-continued}}
+\hypertarget{running-the-program-for-execution}{%
+\subsection{Running the program for
+execution}\label{running-the-program-for-execution}}
+
+Image files should be located as shown in the following figure.
 
 \begin{figure}
 \centering
-\includegraphics[width=\textwidth,height=4.16667in]{./img/data.png}
-\caption{At the moment, the results of the calculations look like this}
+\includegraphics{./img/files.png}
+\caption{Folder tree}
 \end{figure}
 
-\includegraphics[width=\textwidth,height=2.60417in]{./img/convex_triangles.png}
-\includegraphics[width=\textwidth,height=2.60417in]{./img/edge_triangles.png}
+For each individual moth, a folder should be created with the same name
+as the name of the insect. This name will later be inserted into the
+results table. Inside the folder there must be files whose names can be
+anything, but at the end of the file name there must be postfixes:
+\textbf{body}, \textbf{left\_wing} or \textbf{right\_wing}.
+
+To run the program for execution, you need to open the file in the
+\textbf{Rstudio} program and execute the command \textbf{Code} →
+\textbf{Source}
+
+\includegraphics{./img/RStudio.png} After execution, a file called
+\textbf{data.csv} will appear in the folder.
+
+\begin{figure}
+\centering
+\includegraphics[width=6.25in,height=\textheight]{./img/data.png}
+\caption{The results of the calculations}
+\end{figure}
+
+To run the program on \emph{Palmetto} cluster for high performance, you
+need to execute the the following commands.
+
+Copy files to palmetto:
+
+\begin{verbatim}
+$ git clone https://github.com/andy-aa/butterfly_scan.git
+\end{verbatim}
+
+Make a reservation computing node:
+
+\begin{verbatim}
+$ qsub -I -l select=1:ncpus=4:mem=10gb:interconnect=1g,walltime=2:00:00
+\end{verbatim}
+
+Load the R language module:
+
+\begin{verbatim}
+$ module load r/4.1.2-gcc/8.4.1
+\end{verbatim}
+
+Run script for execution:
+
+\begin{verbatim}
+$ Rscript run.R
+\end{verbatim}
 
 \hypertarget{references}{%
 \section{References}\label{references}}
@@ -397,9 +443,9 @@ Foundation for Statistical Computing.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Insect-flight}{}}%
 \CSLLeftMargin{2. }
-\CSLRightInline{Wikipedia.org (2022)
-\href{https://en.wikipedia.org/wiki/Insect_flight\#Indirect_flight}{Insect
-indirect flight}.}
+\CSLRightInline{Smith DS (1965)
+\href{https://doi.org/10.1242/jeb.204.23.4125}{Flight muscles of
+insects}. \emph{Scientific American} 212: 76--88.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Bronstein2008}{}}%
 \CSLLeftMargin{3. }
@@ -409,20 +455,24 @@ sets by polytopes}. \emph{J Math Sci} 153: pages727--762.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Canny-edge}{}}%
 \CSLLeftMargin{4. }
-\CSLRightInline{Wikipedia.org (2022)
-\href{https://en.wikipedia.org/wiki/Canny_edge_detector}{Canny edge
-detector}.}
+\CSLRightInline{Canny J (1986)
+\href{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.420.3300\&rep=rep1\&type=pdf}{A
+computational approach to edge detection}. \emph{IEEE Transactions on
+Pattern Analysis and Machine Intelligence} 8: 679--698.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Alpha-shape}{}}%
 \CSLLeftMargin{5. }
-\CSLRightInline{Wikipedia.org (2022)
-\href{https://en.wikipedia.org/wiki/Alpha_shape}{Alpha shape}.}
+\CSLRightInline{Knorr EM, Ng RT, Shilvock DL (1997)
+\href{https://doi.org/10.1007/3-540-63238-7_23}{Finding boundary shape
+matching relationships in spatial data}, In: Scholl M, Voisard A (Eds.),
+\emph{Advances in spatial databases}, Berlin, Heidelberg, Springer
+Berlin Heidelberg, 29--46.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-Shoelace-formula}{}}%
 \CSLLeftMargin{6. }
-\CSLRightInline{Wikipedia.org (2022)
-\href{https://en.wikipedia.org/wiki/Shoelace_formula}{Gauss's area
-formula}.}
+\CSLRightInline{Allgower PH Eugene L.; Schmidt (1986)
+\href{https://doi.org/10.2307\%2F2008221}{Computing volumes of
+polyhedra}. \emph{Mathematics of Computation} 46: 171--174.}
 
 \end{CSLReferences}
 
